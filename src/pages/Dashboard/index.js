@@ -11,10 +11,13 @@ import { Container, Title, List } from './styles';
 
 function Dashboard({ isFocused }) {
   const [appointments, setAppointments] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   async function loadAppointments() {
+    setRefreshing(true);
     const response = await api.get('appointments');
     setAppointments(response.data);
+    setRefreshing(false);
   }
 
   useEffect(() => {
@@ -45,6 +48,8 @@ function Dashboard({ isFocused }) {
 
         <List
           data={appointments}
+          onRefresh={loadAppointments}
+          refreshing={refreshing}
           keyExtractor={item => String(item.id)}
           renderItem={({ item }) => (
             <Appointment onCancel={() => handleCancel(item.id)} data={item} />
